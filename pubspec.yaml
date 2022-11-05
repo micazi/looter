@@ -1,0 +1,13 @@
+name: looter
+description: A simple yet fully-featured web scraper for both static and dynamically generated web pages.
+version: 1.0.0
+homepage: https://github.com/micazi/looter
+
+environment:
+  sdk: ">=2.18.2 <3.0.0"
+
+dependencies:
+  html: ^0.15.1
+  puppeteer: ^2.17.0
+
+dev_dependencies:

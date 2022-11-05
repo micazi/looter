@@ -1,0 +1,1 @@
+enum CrawlingMethod { staticCrawler, dynamicCrawler }
