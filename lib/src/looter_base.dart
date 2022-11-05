@@ -77,16 +77,19 @@ class Looter {
   ///    .from("http://books.toscrape.com")
   ///    .loot('article.product_pod h3 a', "bookTitle");
   ///```
-  static LootElement loot(
+  static LootElement? loot(
       dynamic input, String selector, String elementIdentifier) {
     Element? element;
     try {
-      Document parsedData = parse(input.content);
+      Document parsedData = parse(input);
       element = parsedData.querySelector(selector);
     } catch (e) {
       print("Error in parsing the input : $e");
     }
-    return LootElement.fromElement(element!, elementIdentifier);
+
+    return element != null
+        ? LootElement.fromElement(element, elementIdentifier)
+        : null;
   }
 
   ///
@@ -98,11 +101,11 @@ class Looter {
   ///      .lootAll('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  static List<LootElement> lootAll(
+  static List<LootElement?> lootAll(
       dynamic input, String selector, String elementIdentifier) {
     List<Element>? elements;
     try {
-      Document parsedData = parse(input.content);
+      Document parsedData = parse(input);
       elements = parsedData.querySelectorAll(selector);
     } catch (e) {
       print("Error in parsing the input : $e");
@@ -145,20 +148,18 @@ class Looter {
     String parentSelector,
     Map<String, String> childrenSelectors,
   ) {
-    List<LootElement?> r = [];
-
-    List<LootElement> parents = lootAll(input, parentSelector, "parent");
-
+    List<LootElement?> _return = [];
+    List<LootElement?> parents = lootAll(input, parentSelector, "parent")
+        .where((e) => e != null)
+        .toList();
     for (var i = 0; i < parents.length; i++) {
-      LootElement pElement = parents[i];
-
+      LootElement pElement = parents[i]!;
       childrenSelectors.forEach((_title, _selector) {
         LootElement? _childElement = LootElement.fromElement(
             pElement.toElement().querySelector(_selector), "$_title#$i");
-        r.add(_childElement);
+        _return.add(_childElement);
       });
     }
-
-    return r;
+    return _return;
   }
 }

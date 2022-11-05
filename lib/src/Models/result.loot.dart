@@ -80,8 +80,8 @@ extension LootResultExtensions on LootResult {
   ///    .loot('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  LootElement loot(String selector, String elementIdentifier) =>
-      Looter.loot(this, selector, elementIdentifier);
+  LootElement? loot(String selector, String elementIdentifier) =>
+      Looter.loot(content, selector, elementIdentifier);
 
   ///
   /// Loot multible elements with a selector and give it a unique identifier to harvest.
@@ -92,8 +92,9 @@ extension LootResultExtensions on LootResult {
   ///      .lootAll('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  List<LootElement> lootAll(String selector, String elementIdentifier) =>
-      Looter.lootAll(this, selector, elementIdentifier);
+  List<LootElement?> lootAll(String selector, String elementIdentifier) =>
+      Looter.lootAll(
+          this is String ? this : content, selector, elementIdentifier);
 
   ///
   /// Loop over multible parents with a shared selector and get children elements of earch with a map {identifier:selector}
@@ -120,7 +121,7 @@ extension LootResultExtensions on LootResult {
   ///
   List<LootElement?> lootLoop(
           String parentSelector, Map<String, String> childrenSelectors) =>
-      Looter.lootLoop(this, parentSelector, childrenSelectors);
+      Looter.lootLoop(content, parentSelector, childrenSelectors);
 }
 
 extension FutureLootResultExtensions on Future<LootResult> {
@@ -133,8 +134,9 @@ extension FutureLootResultExtensions on Future<LootResult> {
   ///    .loot('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  Future<LootElement> loot(String selector, String elementIdentifier) async =>
-      Looter.loot(await this, selector, elementIdentifier);
+  Future<LootElement?> loot(String selector, String elementIdentifier) async =>
+      Looter.loot(
+          await then((value) => value.content), selector, elementIdentifier);
 
   ///
   /// Loot multible elements with a selector and give it a unique identifier to harvest.
@@ -145,9 +147,10 @@ extension FutureLootResultExtensions on Future<LootResult> {
   ///      .lootAll('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  Future<List<LootElement>> lootAll(
+  Future<List<LootElement?>> lootAll(
           String selector, String elementIdentifier) async =>
-      Looter.lootAll(await this, selector, elementIdentifier);
+      Looter.lootAll(
+          await then((value) => value.content), selector, elementIdentifier);
 
   ///
   /// Loop over multible parents with a shared selector and get children elements of earch with a map {identifier:selector}
@@ -174,5 +177,6 @@ extension FutureLootResultExtensions on Future<LootResult> {
   ///
   Future<List<LootElement?>> lootLoop(
           String parentSelector, Map<String, String> childrenSelectors) async =>
-      Looter.lootLoop(await this, parentSelector, childrenSelectors);
+      Looter.lootLoop(await then((value) => value.content), parentSelector,
+          childrenSelectors);
 }

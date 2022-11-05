@@ -20,7 +20,6 @@ class LootElement {
   String tagName;
   String? text;
   //--
-  List<LootElement> children;
   LootElement({
     required this.elementIdentifier,
     required this.outerHTML,
@@ -30,7 +29,6 @@ class LootElement {
     this.attributes,
     required this.tagName,
     this.text,
-    required this.children,
   });
 
   LootElement copyWith({
@@ -42,7 +40,6 @@ class LootElement {
     Map<String, String>? attributes,
     String? tagName,
     String? text,
-    List<LootElement>? children,
   }) {
     return LootElement(
       elementIdentifier: elementIdentifier ?? this.elementIdentifier,
@@ -53,7 +50,6 @@ class LootElement {
       attributes: attributes ?? this.attributes,
       tagName: tagName ?? this.tagName,
       text: text ?? this.text,
-      children: children ?? this.children,
     );
   }
 
@@ -67,7 +63,6 @@ class LootElement {
       'attributes': attributes,
       'tagName': tagName,
       'text': text,
-      'children': children.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -85,11 +80,6 @@ class LootElement {
           : null,
       tagName: map['tagName'] as String,
       text: map['text'] != null ? map['text'] as String : null,
-      children: List<LootElement>.from(
-        (map['children'] as List<int>).map<LootElement>(
-          (x) => LootElement.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
     );
   }
 
@@ -111,7 +101,6 @@ class LootElement {
       outerHTML: el?.outerHtml ?? "",
       innerHTML: el?.innerHtml ?? "",
       tagName: el?.localName ?? "<>",
-      children: [],
     );
   }
 
@@ -119,7 +108,7 @@ class LootElement {
 
   @override
   String toString() {
-    return 'LootElement(elementIdentifier: $elementIdentifier, outerHTML: $outerHTML, innerHTML: $innerHTML, id: $id, classNames: $classNames, attributes: $attributes, tagName: $tagName, text: $text, children: $children)';
+    return 'LootElement(elementIdentifier: $elementIdentifier, outerHTML: $outerHTML, innerHTML: $innerHTML, id: $id, classNames: $classNames, attributes: $attributes, tagName: $tagName, text: $text)';
   }
 
   @override
@@ -134,8 +123,7 @@ class LootElement {
         collectionEquals(other.classNames, classNames) &&
         collectionEquals(other.attributes, attributes) &&
         other.tagName == tagName &&
-        other.text == text &&
-        collectionEquals(other.children, children);
+        other.text == text;
   }
 
   @override
@@ -147,8 +135,7 @@ class LootElement {
         classNames.hashCode ^
         attributes.hashCode ^
         tagName.hashCode ^
-        text.hashCode ^
-        children.hashCode;
+        text.hashCode;
   }
 }
 
@@ -162,7 +149,7 @@ extension LootElementExtensions on LootElement {
   ///    .loot('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  LootElement loot(String selector, String elementIdentifier) =>
+  LootElement? loot(String selector, String elementIdentifier) =>
       Looter.loot(outerHTML, selector, elementIdentifier);
 
   ///
@@ -174,7 +161,7 @@ extension LootElementExtensions on LootElement {
   ///      .lootAll('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  List<LootElement> lootAll(String selector, String elementIdentifier) =>
+  List<LootElement?> lootAll(String selector, String elementIdentifier) =>
       Looter.lootAll(outerHTML, selector, elementIdentifier);
 
   ///
@@ -215,7 +202,7 @@ extension FutureLootElementExtensions on Future<LootElement> {
   ///    .loot('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  Future<LootElement> loot(String selector, String elementIdentifier) async =>
+  Future<LootElement?> loot(String selector, String elementIdentifier) async =>
       Looter.loot(await then((s) => s.outerHTML), selector, elementIdentifier);
 
   ///
@@ -227,7 +214,7 @@ extension FutureLootElementExtensions on Future<LootElement> {
   ///      .lootAll('article.product_pod h3 a', "bookTitle");
   ///```
   ///
-  Future<List<LootElement>> lootAll(
+  Future<List<LootElement?>> lootAll(
           String selector, String elementIdentifier) async =>
       Looter.lootAll(
           await then((s) => s.outerHTML), selector, elementIdentifier);
