@@ -51,13 +51,16 @@ class Looter {
   }) async {
     if (_method == CrawlingMethod.dynamicCrawler) {
       Page page = await _browser!.newPage();
+      late LootResult _return;
       Response response =
           await page.goto(url, timeout: timeout, wait: waitUntil);
-      return LootResult(
+      _return = LootResult(
         status: response.status,
         headers: response.headers,
         content: await response.content,
       );
+      await page.close();
+      return _return;
     } else {
       Uri uri = Uri.parse(url);
       http.Response _response = await _client!.get(uri);
@@ -70,15 +73,15 @@ class Looter {
   }
 
   ///
-  /// Loot a single element with a selector and give it a unique identifier to harvest.
+  /// Loot a single element with a selector and optionally give it a unique identifier to harvest.
   /// Returns a [LootElement].
   ///```dart
   /// LootElement result = await looter
   ///    .from("http://books.toscrape.com")
-  ///    .loot('article.product_pod h3 a', "bookTitle");
+  ///    .loot('article.product_pod h3 a', elementIdentifier: "bookTitle");
   ///```
-  static LootElement? loot(
-      dynamic input, String selector, String elementIdentifier) {
+  static LootElement? loot(dynamic input, String selector,
+      {String? elementIdentifier}) {
     Element? element;
     try {
       Document parsedData = parse(input);
@@ -88,21 +91,21 @@ class Looter {
     }
 
     return element != null
-        ? LootElement.fromElement(element, elementIdentifier)
+        ? LootElement.fromElement(element, elementIdentifier ?? "")
         : null;
   }
 
   ///
-  /// Loot multible elements with a selector and give it a unique identifier to harvest.
+  /// Loot multible elements with a selector and optionally give it a unique identifier to harvest.
   /// Returns [List<LootElement?>] with identifier: identifier#xx.
   ///  ```dart
   ///  List<LootElement?> result = await looter
   ///      .from("http://books.toscrape.com")
-  ///      .lootAll('article.product_pod h3 a', "bookTitle");
+  ///      .lootAll('article.product_pod h3 a', elementIdentifier: "bookTitle");
   ///```
   ///
-  static List<LootElement?> lootAll(
-      dynamic input, String selector, String elementIdentifier) {
+  static List<LootElement?> lootAll(dynamic input, String selector,
+      {String? elementIdentifier}) {
     List<Element>? elements;
     try {
       Document parsedData = parse(input);
@@ -114,51 +117,65 @@ class Looter {
     List<LootElement> _return = [];
     for (var i = 0; i < elements!.length; i++) {
       Element e = elements[i];
-      _return.add(LootElement.fromElement(e, "$elementIdentifier#$i"));
+      _return.add(LootElement.fromElement(e, "${elementIdentifier ?? ''}#$i"));
     }
 
     return _return;
   }
 
   ///
-  /// Loop over multible parents with a shared selector and get children elements of earch with a map {identifier:selector}
-  /// Returns [List<LootElement?>] with identifier: identifier#xx.
+  /// Loop over multible parents with a shared selector and get children elements as a list of mapped objects
+  /// Takes in a 2 dimensioned map: Map<'elementSelector', Map<'elementIdentifier' : 'elementProperty'>>
+  /// Returns [List<Map<String,dynamic>>]: Map<'elementIdenifier' : 'value'>.
   ///```dart
-  ///  List<LootElement?> result =
-  ///      await looter.from("http://books.toscrape.com").lootLoop(
+  ///  List<Map<String, dynamic>> result =
+  ///      await looter.from("http://books.toscrape.com").loop(
   ///    'ol.row li', // give the looper the shared parents selector..
-  ///    {
-  ///      // give it a map of identifiers (to identify later from the list of elements
-  ///      // as 'identifier#parentnumber) and a child selector.'
-  ///      "bookTitle": "article.product_pod h3 a",
-  ///      "bookPrice": "div.product_price p.price_color",
-  ///      "bookAvailability": "div.product_price instock availability",
-  ///    },
+  /// {
+  ///       'article.product_pod h3 a': {"bookTitle": 'text'},
+  ///       'div.image_container img': {"bookImage": 'src'},
+  ///       'div.product_price p.price_color': {'bookPrice': 'text'},
+  ///       'div.product_price instock availability': {'bookAvailability': 'text'},
+  ///     },
   ///  );
-  ///   // filter the list by element identifiers like this:
-  ///  LootElement? elementIWant = result
-  ///      .where(
-  ///        (e) => e?.elementIdentifier == "bookTitle#5",
-  ///     )
-  ///      .single;
   ///```
   ///
-  static List<LootElement?> lootLoop(
+  static List<Map<String, dynamic>> loop(
     dynamic input,
     String parentSelector,
-    Map<String, String> childrenSelectors,
+    Map<String, Map<String, String?>> targets,
   ) {
-    List<LootElement?> _return = [];
-    List<LootElement?> parents = lootAll(input, parentSelector, "parent")
-        .where((e) => e != null)
-        .toList();
-    for (var i = 0; i < parents.length; i++) {
-      LootElement pElement = parents[i]!;
-      childrenSelectors.forEach((_title, _selector) {
-        LootElement? _childElement = LootElement.fromElement(
-            pElement.toElement().querySelector(_selector), "$_title#$i");
-        _return.add(_childElement);
+    List<Map<String, dynamic>> _return = [];
+    List<LootElement?> _parents =
+        lootAll(input, parentSelector).where((e) => e != null).toList();
+    for (var i = 0; i < _parents.length; i++) {
+      LootElement pElement = _parents[i]!;
+      Map<String, dynamic> _object = {};
+      targets.forEach((_targetSelector, _targetMap) {
+        _targetMap.forEach((_targetName, _targetModifier) {
+          LootElement? _childElement = LootElement.fromElement(
+              pElement.toElement().querySelector(_targetSelector),
+              "$_targetName#$i");
+          late dynamic _modifiedElement;
+          if (_targetModifier != null) {
+            if (_targetModifier == "text") {
+              _modifiedElement = _childElement.text;
+            } else {
+              _modifiedElement = _childElement.attributes?[_targetModifier];
+            }
+          } else {
+            _modifiedElement = _childElement;
+          }
+          _object.addEntries([
+            MapEntry(
+              _targetName,
+              _modifiedElement,
+            )
+          ]);
+        });
       });
+      //
+      _return.add(_object);
     }
     return _return;
   }

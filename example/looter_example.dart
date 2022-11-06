@@ -9,28 +9,14 @@ void main() async {
       await Looter.initialize(crawlingMethod: CrawlingMethod.dynamicCrawler);
   //
   //2. Start Looting!
-  List<LootElement?> result = await looter
-      .from(
-    "http://books.toscrape.com",
-    waitUntil: Until.domContentLoaded,
-    timeout: Duration(
-      seconds: 20,
-    ),
-  )
-      .lootLoop(
+  List<Map<String, dynamic>> result =
+      await looter.from("http://books.toscrape.com").loop(
     'ol.row li', // give the looper the shared parents selector..
     {
-      // give it a map of identifiers (to identify later from the list of elements
-      // as 'identifier#parentnumber) and a child selector.'
-      "bookTitle": "article.product_pod h3 a",
-      "bookPrice": "div.product_price p.price_color",
-      "bookAvailability": "div.product_price instock availability",
+      'article.product_pod h3 a': {"bookTitle": 'text'},
+      'div.image_container img': {"bookImage": 'src'},
+      'div.product_price p.price_color': {'bookPrice': 'text'},
+      'div.product_price instock availability': {'bookAvailability': 'text'},
     },
   );
-  // filter the list by element identifiers like this:
-  LootElement? elementIWant = result
-      .where(
-        (e) => e?.elementIdentifier == "bookTitle#5",
-      )
-      .single;
 }

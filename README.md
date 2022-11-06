@@ -56,7 +56,9 @@ void main() async {
 ```dart
   LootElement result = await looter
       .from("http://books.toscrape.com")
-      .loot('article.product_pod h3 a', "bookTitle");
+      .loot('article.product_pod h3 a',
+      elementIdentifier: "bookTitle",
+      );
 ```
 
 - ###### Loot all elements with selector 🔗
@@ -64,29 +66,24 @@ void main() async {
 ```dart
   List<LootElement> result = await looter
       .from("http://books.toscrape.com")
-      .lootAll('article.product_pod h3 a', "bookTitle");
+      .lootAll('article.product_pod h3 a',
+      elementIdentifier: "bookTitle",
+      );
 ```
 
 - ###### And my favorite, a Loot Loop ➰➰
 
 ```dart
   List<LootElement?> result =
-      await looter.from("http://books.toscrape.com").lootLoop(
+      await looter.from("http://books.toscrape.com").loop(
     'ol.row li', // give the looper the shared parents selector..
-    {
-      // give it a map of identifiers (to identify later from the list of elements
-      // as 'identifier#parentnumber) and a child selector.'
-      "bookTitle": "article.product_pod h3 a",
-      "bookPrice": "div.product_price p.price_color",
-      "bookAvailability": "div.product_price instock availability",
-    },
+ {
+       'article.product_pod h3 a': {"bookTitle": 'text'},
+       'div.image_container img': {"bookImage": 'src'},
+       'div.product_price p.price_color': {'bookPrice': 'text'},
+       'div.product_price instock availability': {'bookAvailability': 'text'},
+     },
   );
-    // filter the list by element identifiers like this:
-  LootElement? elementIWant = result
-      .where(
-        (e) => e?.elementIdentifier == "bookTitle#5",
-      )
-      .single;
 ```
 
 ## Checklist
@@ -106,6 +103,7 @@ I will try to keep adding suggested features as i go.
 ## Versioning
 
 - **V1.0.0** - Initial Release.
+- **V1.1.0** - Refactored lootLoop function for easier handling.
 
 ## Authors
 

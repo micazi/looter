@@ -141,109 +141,97 @@ class LootElement {
 
 extension LootElementExtensions on LootElement {
   ///
-  /// Loot a single element with a selector and give it a unique identifier to harvest.
+  /// Loot a single element with a selector and optionally give it a unique identifier to harvest.
   /// Returns a [LootElement].
   ///```dart
   /// LootElement result = await looter
   ///    .from("http://books.toscrape.com")
-  ///    .loot('article.product_pod h3 a', "bookTitle");
+  ///    .loot('article.product_pod h3 a', elementIdentifier: "bookTitle");
   ///```
-  ///
-  LootElement? loot(String selector, String elementIdentifier) =>
-      Looter.loot(outerHTML, selector, elementIdentifier);
+  LootElement? loot(String selector, {String? elementIdentifier}) =>
+      Looter.loot(outerHTML, selector, elementIdentifier: elementIdentifier);
 
   ///
-  /// Loot multible elements with a selector and give it a unique identifier to harvest.
+  /// Loot multible elements with a selector and optionally give it a unique identifier to harvest.
   /// Returns [List<LootElement?>] with identifier: identifier#xx.
   ///  ```dart
   ///  List<LootElement?> result = await looter
   ///      .from("http://books.toscrape.com")
-  ///      .lootAll('article.product_pod h3 a', "bookTitle");
+  ///      .lootAll('article.product_pod h3 a', elementIdentifier: "bookTitle");
   ///```
   ///
-  List<LootElement?> lootAll(String selector, String elementIdentifier) =>
-      Looter.lootAll(outerHTML, selector, elementIdentifier);
+  List<LootElement?> lootAll(String selector, {String? elementIdentifier}) =>
+      Looter.lootAll(outerHTML, selector, elementIdentifier: elementIdentifier);
 
   ///
-  /// Loop over multible parents with a shared selector and get children elements of earch with a map {identifier:selector}
-  /// Returns [List<LootElement?>] with identifier: identifier#xx.
+  /// Loop over multible parents with a shared selector and get children elements as a list of mapped objects
+  /// Takes in a 2 dimensioned map: Map<'elementSelector', Map<'elementIdentifier' : 'elementProperty'>>
+  /// Returns [List<Map<String,dynamic>>]: Map<'elementIdenifier' : 'value'>.
   ///```dart
-  ///  List<LootElement?> result =
-  ///      await looter.from("http://books.toscrape.com").lootLoop(
+  ///  List<Map<String, dynamic>> result =
+  ///      await looter.from("http://books.toscrape.com").loop(
   ///    'ol.row li', // give the looper the shared parents selector..
-  ///    {
-  ///      // give it a map of identifiers (to identify later from the list of elements
-  ///      // as 'identifier#parentnumber) and a child selector.'
-  ///      "bookTitle": "article.product_pod h3 a",
-  ///      "bookPrice": "div.product_price p.price_color",
-  ///      "bookAvailability": "div.product_price instock availability",
-  ///    },
+  /// {
+  ///       'article.product_pod h3 a': {"bookTitle": 'text'},
+  ///       'div.image_container img': {"bookImage": 'src'},
+  ///       'div.product_price p.price_color': {'bookPrice': 'text'},
+  ///       'div.product_price instock availability': {'bookAvailability': 'text'},
+  ///     },
   ///  );
-  ///   // filter the list by element identifiers like this:
-  ///  LootElement? elementIWant = result
-  ///      .where(
-  ///        (e) => e?.elementIdentifier == "bookTitle#5",
-  ///     )
-  ///      .single;
   ///```
   ///
-  List<LootElement?> lootLoop(
-          String parentSelector, Map<String, String> childrenSelectors) =>
-      Looter.lootLoop(outerHTML, parentSelector, childrenSelectors);
+  List<Map<String, dynamic>> loop(String parentSelector,
+          Map<String, Map<String, String?>> childrenSelectors) =>
+      Looter.loop(outerHTML, parentSelector, childrenSelectors);
 }
 
 extension FutureLootElementExtensions on Future<LootElement> {
   ///
-  /// Loot a single element with a selector and give it a unique identifier to harvest.
+  /// Loot a single element with a selector and optionally give it a unique identifier to harvest.
   /// Returns a [LootElement].
   ///```dart
   /// LootElement result = await looter
   ///    .from("http://books.toscrape.com")
-  ///    .loot('article.product_pod h3 a', "bookTitle");
+  ///    .loot('article.product_pod h3 a', elementIdentifier: "bookTitle");
   ///```
-  ///
-  Future<LootElement?> loot(String selector, String elementIdentifier) async =>
-      Looter.loot(await then((s) => s.outerHTML), selector, elementIdentifier);
+  Future<LootElement?> loot(String selector,
+          {String? elementIdentifier}) async =>
+      Looter.loot(await then((s) => s.outerHTML), selector,
+          elementIdentifier: elementIdentifier);
 
   ///
-  /// Loot multible elements with a selector and give it a unique identifier to harvest.
+  /// Loot multible elements with a selector and optionally give it a unique identifier to harvest.
   /// Returns [List<LootElement?>] with identifier: identifier#xx.
   ///  ```dart
   ///  List<LootElement?> result = await looter
   ///      .from("http://books.toscrape.com")
-  ///      .lootAll('article.product_pod h3 a', "bookTitle");
+  ///      .lootAll('article.product_pod h3 a', elementIdentifier: "bookTitle");
   ///```
   ///
-  Future<List<LootElement?>> lootAll(
-          String selector, String elementIdentifier) async =>
-      Looter.lootAll(
-          await then((s) => s.outerHTML), selector, elementIdentifier);
+  Future<List<LootElement?>> lootAll(String selector,
+          {String? elementIdentifier}) async =>
+      Looter.lootAll(await then((s) => s.outerHTML), selector,
+          elementIdentifier: elementIdentifier);
 
   ///
-  /// Loop over multible parents with a shared selector and get children elements of earch with a map {identifier:selector}
-  /// Returns [List<LootElement?>] with identifier: identifier#xx.
+  /// Loop over multible parents with a shared selector and get children elements as a list of mapped objects
+  /// Takes in a 2 dimensioned map: Map<'elementSelector', Map<'elementIdentifier' : 'elementProperty'>>
+  /// Returns [List<Map<String,dynamic>>]: Map<'elementIdenifier' : 'value'>.
   ///```dart
-  ///  List<LootElement?> result =
-  ///      await looter.from("http://books.toscrape.com").lootLoop(
+  ///  List<Map<String, dynamic>> result =
+  ///      await looter.from("http://books.toscrape.com").loop(
   ///    'ol.row li', // give the looper the shared parents selector..
-  ///    {
-  ///      // give it a map of identifiers (to identify later from the list of elements
-  ///      // as 'identifier#parentnumber) and a child selector.'
-  ///      "bookTitle": "article.product_pod h3 a",
-  ///      "bookPrice": "div.product_price p.price_color",
-  ///      "bookAvailability": "div.product_price instock availability",
-  ///    },
+  /// {
+  ///       'article.product_pod h3 a': {"bookTitle": 'text'},
+  ///       'div.image_container img': {"bookImage": 'src'},
+  ///       'div.product_price p.price_color': {'bookPrice': 'text'},
+  ///       'div.product_price instock availability': {'bookAvailability': 'text'},
+  ///     },
   ///  );
-  ///   // filter the list by element identifiers like this:
-  ///  LootElement? elementIWant = result
-  ///      .where(
-  ///        (e) => e?.elementIdentifier == "bookTitle#5",
-  ///     )
-  ///      .single;
   ///```
   ///
-  Future<List<LootElement?>> lootLoop(
-          String parentSelector, Map<String, String> childrenSelectors) async =>
-      Looter.lootLoop(
+  Future<List<Map<String, dynamic>>> loop(String parentSelector,
+          Map<String, Map<String, String?>> childrenSelectors) async =>
+      Looter.loop(
           await then((s) => s.outerHTML), parentSelector, childrenSelectors);
 }
