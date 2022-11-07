@@ -20,7 +20,7 @@ class LootResult {
   LootResult copyWith({
     int? status,
     Map<String, String>? headers,
-    dynamic? content,
+    dynamic content,
   }) {
     return LootResult(
       status: status ?? this.status,
