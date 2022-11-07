@@ -17,6 +17,7 @@ void main() async {
       'div.image_container img': {"bookImage": 'src'},
       'div.product_price p.price_color': {'bookPrice': 'text'},
       'div.product_price instock availability': {'bookAvailability': 'text'},
+      // and if you want to loot multible children, use the array modifier! 'array:text', 'array:src', etc..
     },
   );
 }

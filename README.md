@@ -82,6 +82,7 @@ void main() async {
        'div.image_container img': {"bookImage": 'src'},
        'div.product_price p.price_color': {'bookPrice': 'text'},
        'div.product_price instock availability': {'bookAvailability': 'text'},
+       // and if you want to loot multible children, use the array modifier! 'array:text', 'array:src', etc..
      },
   );
 ```
@@ -104,6 +105,7 @@ I will try to keep adding suggested features as i go.
 
 - **V1.0.0** - Initial Release.
 - **V1.1.0** - Refactored lootLoop function for easier handling.
+- **V1.2.0** - Added an Array modifier to the loop function.
 
 ## Authors
 

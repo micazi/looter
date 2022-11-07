@@ -4,4 +4,8 @@
 
 ## 1.1.0
 
-- Refactored lootLoop function for easier handling.
+- Refactored loop function for easier handling.
+
+## 1.2.0
+
+- Added an Array modifier to the loop function.

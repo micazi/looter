@@ -153,28 +153,56 @@ class Looter {
       Map<String, dynamic> _object = {};
       targets.forEach((_targetSelector, _targetMap) {
         _targetMap.forEach((_targetName, _targetModifier) {
-          LootElement? _childElement = LootElement.fromElement(
-              pElement.toElement().querySelector(_targetSelector),
-              "$_targetName#$i");
-          late dynamic _modifiedElement;
-          if (_targetModifier != null) {
-            if (_targetModifier == "text") {
-              _modifiedElement = _childElement.text;
-            } else {
-              _modifiedElement = _childElement.attributes?[_targetModifier];
+          if (_targetModifier != null && _targetModifier.startsWith('array:')) {
+            List<Element> _elements =
+                pElement.toElement().querySelectorAll(_targetSelector);
+            List<LootElement> _childElements = [];
+            for (var ss = 0; ss < _elements.length; ss++) {
+              Element _s = _elements[ss];
+              _childElements
+                  .add(LootElement.fromElement(_s, '$_targetName#$i-ss'));
             }
+            late dynamic _modifiedElements;
+            if (_targetModifier.split('array:')[1] != "") {
+              String _mod = _targetModifier.split('array:')[1];
+              if (_mod == "text") {
+                _modifiedElements = _childElements.map((e) => e.text).toList();
+              } else {
+                _modifiedElements =
+                    _childElements.map((e) => e.attributes?[_mod]).toList();
+              }
+            } else {
+              _modifiedElements = _childElements;
+            }
+            _object.addEntries([
+              MapEntry(
+                _targetName,
+                _modifiedElements,
+              )
+            ]);
           } else {
-            _modifiedElement = _childElement;
+            LootElement? _childElement = LootElement.fromElement(
+                pElement.toElement().querySelector(_targetSelector),
+                "$_targetName#$i");
+            late dynamic _modifiedElement;
+            if (_targetModifier != null) {
+              if (_targetModifier == "text") {
+                _modifiedElement = _childElement.text;
+              } else {
+                _modifiedElement = _childElement.attributes?[_targetModifier];
+              }
+            } else {
+              _modifiedElement = _childElement;
+            }
+            _object.addEntries([
+              MapEntry(
+                _targetName,
+                _modifiedElement,
+              )
+            ]);
           }
-          _object.addEntries([
-            MapEntry(
-              _targetName,
-              _modifiedElement,
-            )
-          ]);
         });
       });
-      //
       _return.add(_object);
     }
     return _return;
