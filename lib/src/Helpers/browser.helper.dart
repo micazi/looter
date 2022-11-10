@@ -19,7 +19,10 @@ Future<Browser> initializeBrowser({
   logging.Logger('puppeteer.launcher').level =
       debugLog ? logging.Level.INFO : logging.Level.OFF;
   //
-  await download_chrome();
+  if (arguments?.contains('--downloader') ?? false) {
+    await download_chrome();
+    arguments?.remove('--downloader');
+  }
   //
   Browser _browser = await puppeteer.launch(
     timeout: timeout,
