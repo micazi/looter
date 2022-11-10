@@ -13,6 +13,7 @@ Future<Browser> initializeBrowser({
   bool warm = true,
   Duration timeout = const Duration(seconds: 30),
   bool debugLog = true,
+  List<String>? arguments,
 }) async {
   Logger('puppeteer.launcher').level = debugLog ? Level.INFO : Level.OFF;
   //
@@ -23,6 +24,7 @@ Future<Browser> initializeBrowser({
     headless: headless,
     defaultViewport: defaultViewport,
     environment: environmentVariables,
+    args: arguments,
   );
   if (warm) {
     await _browser.newPage().then((_page) async {
