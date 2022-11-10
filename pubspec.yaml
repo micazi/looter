@@ -10,6 +10,8 @@ dependencies:
   collection: ^1.17.0
   html: ^0.15.1
   http: ^0.13.5
+  logging: ^1.1.0
+  path: ^1.8.2
   puppeteer: ^2.17.0
 
 dev_dependencies:
