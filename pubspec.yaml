@@ -7,11 +7,13 @@ environment:
   sdk: ">=2.18.2 <3.0.0"
 
 dependencies:
+  archive: ^3.3.2
   collection: ^1.17.0
   html: ^0.15.1
   http: ^0.13.5
   logging: ^1.1.0
   path: ^1.8.2
-  puppeteer: ^2.17.0
+  petitparser: ^5.1.0
+  pool: ^1.5.1
 
 dev_dependencies:

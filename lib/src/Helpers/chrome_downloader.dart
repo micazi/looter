@@ -3,7 +3,8 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
-import 'package:puppeteer/src/downloader.dart';
+
+import '../../dev/puppeteer/src/downloader.dart';
 
 //
 void main() async => download_chrome();

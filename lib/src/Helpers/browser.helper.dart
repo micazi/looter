@@ -1,10 +1,11 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, depend_on_referenced_packages
 import 'package:logging/logging.dart';
-import 'package:puppeteer/plugin.dart';
-import 'package:puppeteer/puppeteer.dart';
+
+import '../../dev/puppeteer/plugin.dart';
+import '../../dev/puppeteer/puppeteer.dart';
 
 import 'chrome_downloader.dart';
-export 'package:puppeteer/puppeteer.dart';
+export '../../dev/puppeteer/puppeteer.dart';
 
 Future<Browser> initializeBrowser({
   bool headless = true,
