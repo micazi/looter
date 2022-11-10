@@ -1,5 +1,5 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers, depend_on_referenced_packages
-import 'package:logging/logging.dart';
+import 'package:logging/logging.dart' as logging;
 import 'package:puppeteer/plugin.dart';
 import 'package:puppeteer/puppeteer.dart';
 
@@ -15,7 +15,9 @@ Future<Browser> initializeBrowser({
   bool debugLog = true,
   List<String>? arguments,
 }) async {
-  Logger('puppeteer.launcher').level = debugLog ? Level.INFO : Level.OFF;
+  logging.hierarchicalLoggingEnabled = true;
+  logging.Logger('puppeteer.launcher').level =
+      debugLog ? logging.Level.INFO : logging.Level.OFF;
   //
   await download_chrome();
   //
