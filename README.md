@@ -89,6 +89,7 @@ void main() async {
 
 ## Checklist
 
+- (x) Chrome Downloading Handler.
 - () Loots Chaining.
 - () Exporting as an Excel.
 - () Creating a web API from the LootResult with a configurable JSON.
@@ -106,11 +107,12 @@ I will try to keep adding suggested features as i go.
 - **V1.0.0** - Initial Release.
 - **V1.1.0** - Refactored lootLoop function for easier handling.
 - **V1.2.0** - Added an Array modifier to the loop function.
+- **V1.2.5** - Abstracted headless chrome downloader function.
 
 ## Authors
 
-**Michael Aziz** - [Github](https://github.com/micwaziz)
+**Michael Aziz** - [Github](https://github.com/micazi)
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE) file for details

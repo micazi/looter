@@ -1,6 +1,6 @@
 name: looter
 description: A simple yet fully-featured web scraper for both static and dynamically generated web pages.
-version: 1.2.0
+version: 1.2.5
 homepage: https://github.com/micazi/looter
 
 environment:

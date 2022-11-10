@@ -20,4 +20,5 @@ void main() async {
       // and if you want to loot multible children, use the array modifier! 'array:text', 'array:src', etc..
     },
   );
+  print(result.toString());
 }

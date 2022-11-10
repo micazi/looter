@@ -9,3 +9,7 @@
 ## 1.2.0
 
 - Added an Array modifier to the loop function.
+
+## 1.2.5
+
+- Abstracted headless chrome downloader function.

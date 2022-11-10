@@ -19,15 +19,17 @@ class Looter {
 
   ///
   /// Initialize the looter with either static crawler or dynamic one, for static HTML content and
-  /// server/js generated content respectively.
+  /// server/js generated content respectively. optionally specify logging enabled for debugging.
   ///
   static Future<Looter> initialize(
-      {CrawlingMethod crawlingMethod = CrawlingMethod.staticCrawler}) async {
+      {CrawlingMethod crawlingMethod = CrawlingMethod.staticCrawler,
+      bool debugLog = true,
+      Duration timeout = const Duration(seconds: 30)}) async {
     if (_instance == null) {
       Browser? browser;
       http.Client? client;
       if (crawlingMethod == CrawlingMethod.dynamicCrawler) {
-        browser = await initializeBrowser();
+        browser = await initializeBrowser(debugLog: debugLog, timeout: timeout);
       } else {
         client = http.Client();
       }
